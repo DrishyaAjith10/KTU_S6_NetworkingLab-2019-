@@ -1,3 +1,5 @@
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,53 +9,40 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-int main()
-{
+int main(){
     int sock;
-    struct sockaddr_in server_addr;
-    socklen_t len;
     char buffer[BUFFER_SIZE];
+    
+    struct sockaddr_in server_addr;
+    socklen_t len = sizeof(server_addr);
 
-    // 1. Create UDP socket
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    sock = socket(AF_INET,SOCK_DGRAM,0);
 
-    // 2. Define server address
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
+    inet_pton(AF_INET,"127.0.0.1",&server_addr.sin_addr);
 
-    len = sizeof(server_addr);
+    while(1){
+        memset(buffer,0, BUFFER_SIZE);
 
-    printf("UDP Client Ready...\n");
-
-    while (1)
-    {
-        // Send message
         printf("Client: ");
-        fgets(buffer, BUFFER_SIZE, stdin);
+        fgets(buffer,BUFFER_SIZE,stdin);
+        if(strncmp(buffer, "exit",4)== 0){
+            break;
+        }
+        sendto(sock,buffer,strlen(buffer),0,(struct sockaddr *)&server_addr,len);
 
-        sendto(sock,
-               buffer,
-               strlen(buffer),
-               0,
-               (struct sockaddr *)&server_addr,
-               len);
+        memset(buffer,0, BUFFER_SIZE);
+        printf("Server: ");
+        recvfrom(sock,buffer,BUFFER_SIZE,0,(struct sockaddr *)&server_addr,&len);
+        printf("%s", buffer);
 
-        // Clear buffer
-        memset(buffer, 0, BUFFER_SIZE);
 
-        // Receive reply
-        recvfrom(sock,
-                 buffer,
-                 BUFFER_SIZE,
-                 0,
-                 (struct sockaddr *)&server_addr,
-                 &len);
-
-        printf("Server: %s", buffer);
     }
 
     close(sock);
-
     return 0;
+
+
+
 }

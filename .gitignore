@@ -1,0 +1,24 @@
+# Compiled executables
+server
+client
+*.out
+*.exe
+
+# Object files
+*.o
+*.obj
+
+# macOS files
+.DS_Store
+
+# VS Code
+.vscode/
+
+# CLion / JetBrains
+.idea/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp

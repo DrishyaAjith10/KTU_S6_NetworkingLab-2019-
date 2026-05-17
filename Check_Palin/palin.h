@@ -1,0 +1,1 @@
+int isPalin(char str[]);
